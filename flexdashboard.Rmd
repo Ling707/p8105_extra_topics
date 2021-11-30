@@ -1,0 +1,106 @@
+---
+title: "flexdashboard for R shiny"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+  runtime: shiny #this is important
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(viridis)
+library(p8105.datasets)
+library(plotly)
+library(shiny)
+```
+```{r data import}
+data("nyc_airbnb")
+nyc_airbnb = 
+  nyc_airbnb %>% 
+  mutate(stars = review_scores_location / 2) %>%
+  select(
+    boro = neighbourhood_group, neighbourhood, stars, price, room_type,
+    lat, long) %>%
+  drop_na(stars)
+
+```
+
+
+Column {.sidebar}
+-----------------------------------------------
+```{r}
+# selectInput: what the input is suppose to be, a drop-down select list
+borough_choice = nyc_airbnb %>%
+  distinct(boro)
+
+selectInput(
+  "borough_choice",
+  label = h3("Select Borough"),
+  choices = borough_choice,
+  selected = "Manhattan"
+)
+
+min_price = nyc_airbnb %>%
+  distinct(price) %>%
+  min()
+
+max_price = nyc_airbnb %>%
+  distinct(price) %>%
+  max()
+
+#sliderinput
+sliderInput(
+  "price_choice",
+  label = h3("Price Range"),
+  min = min_price,
+  max = max_price,
+  value = c(100,500)
+)
+
+room_choice = nyc_airbnb %>% distinct(room_type) %>% pull()
+
+# radioButtons widget
+radioButtons(
+  "room_choice", 
+  label = h3("Choose room type"),
+  choices = room_choice, selected = "Entire home/apt")
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+renderPrint({
+  input[["borough_choice"]]
+})
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+renderPlotly({ 
+  nyc_airbnb %>%
+  mutate(text_label = str_c("Price: $", price, '\nRating: ', stars)) %>% 
+  plot_ly(
+    x = ~long, y = ~lat, type = "scatter", mode = "markers",
+    alpha = 0.5, color = ~price, text = ~text_label)
+})
+```
+
+### Chart C
+
+```{r}
+renderPrint({
+  input[["room_choice"]]
+})
+```
+

@@ -8,3 +8,35 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## 1/2 R shiny
+- Pros
+  - allows interactivity, more flexible than dashboard
+- `shiny`
+  - creating web-apps
+- components
+  - a user interface
+  - code that reacts to inputs and produces outputs
+- getting inputs
+- producing outputs: `render_`
+  - `renderPrint`
+  - `renderText`
+  - `renderTable`
+  - `renderPlot`
+  - `renderPlotly`
+- flexdashboard + shiny
+  - Rmd-based __shiny document__
+- sharing shiny products
+  - providing files
+    - providing **raw** files
+    - recipient need to knit/run through Rstudio
+  - hosting online
+    - need a server(not github) to run R in the background
+    - `shinyapps.io`
+
+### practice
+- start with `flexdashboard`
+- A/B testing dashboard
+- hosting shiny doc: copy the code
+- shiny apps
+  
+  
